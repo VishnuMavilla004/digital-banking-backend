@@ -7,6 +7,27 @@ A RESTful digital banking backend built with Python, FastAPI, PostgreSQL, and SQ
 
 The Digital Banking Backend provides APIs for customers and administrators to manage banking operations.
 
+## Live Deployment
+
+**Application:** Digital Banking Backend
+
+**Live API:** https://digital-banking-backend-gctw.onrender.com/
+
+**Swagger Documentation:** https://digital-banking-backend-gctw.onrender.com/docs
+
+**Health Check:** https://digital-banking-backend-gctw.onrender.com/health
+
+### Deployment Architecture
+- Application hosting: Render
+- Containerization: Docker
+- Database: Neon PostgreSQL
+- Backend framework: FastAPI
+- ORM: SQLAlchemy
+- Database migrations: Alembic
+- Application server: Uvicorn
+
+**Note:** This is an educational portfolio project. Banking transactions are simulated and do not involve real money.
+
 ### Core Features
 
 - User registration and authentication

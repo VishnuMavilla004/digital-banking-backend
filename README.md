@@ -155,6 +155,20 @@ migrations/
 docs/
 scripts/
 ```
+## Common Response Codes
+
+| Code | Meaning |
+|---|---|
+| 200 | Request successful |
+| 201 | Resource created successfully |
+| 204 | Resource deleted successfully (no response body) |
+| 400 | Bad request |
+| 401 | Authentication required |
+| 403 | Permission denied |
+| 404 | Resource not found |
+| 409 | Conflict |
+| 422 | Validation error |
+| 500 | Internal server error |
 
 ## Local Setup
 

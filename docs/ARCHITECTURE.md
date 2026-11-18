@@ -103,6 +103,7 @@ flowchart TD
 
 ## 5. Transaction Reliability
 
+```
 The banking service uses:
 
 - Database transactions to group related updates.

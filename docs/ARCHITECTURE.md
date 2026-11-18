@@ -114,8 +114,4 @@ The banking service uses:
 The project is an educational implementation. External banking integrations, payment settlement, regulatory controls, and production operational safeguards are outside its current scope.
 ```
 
-This gives interviewers three useful views: application structure, database relationships, and the transfer execution flow.
-
-## 21.4 — Generate the API reference automatically
-
 Rather than manually guessing endpoint paths, we'll generate documentation directly from FastAPI's OpenAPI schema. This ensures the published API reference matches your actual routers.

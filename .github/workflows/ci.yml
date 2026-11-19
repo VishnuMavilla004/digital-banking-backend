@@ -1,0 +1,100 @@
+
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality-and-tests:
+    name: Code Quality and Automated Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: digital_banking_ci
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd "pg_isready -U postgres -d digital_banking_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_NAME: digital_banking_ci
+      DB_TEST_NAME: digital_banking_test
+
+      JWT_SECRET_KEY: ci-only-secret-key-do-not-use-in-production-123456789
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+
+      PGPASSWORD: postgres
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create isolated test database
+        run: |
+          psql -h 127.0.0.1 -U postgres \
+            -d digital_banking_ci \
+            -c "CREATE DATABASE digital_banking_test;"
+
+      - name: Run Ruff lint
+        run: |
+          ruff check app tests scripts
+
+      - name: Verify formatting
+        run: |
+          ruff format --check app tests scripts
+
+      - name: Compile Python files
+        run: |
+          python -m compileall app tests migrations scripts
+
+      - name: Apply database migrations
+        run: |
+          alembic upgrade head
+
+      - name: Verify migration consistency
+        run: |
+          alembic check
+
+      - name: Run automated tests
+        run: |
+          pytest -v
+
+      - name: Build Docker image
+        run: |
+          docker build -t digital-banking-backend:ci .

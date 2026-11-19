@@ -1,8 +1,13 @@
 # API Reference
 
-Automatically generated from the FastAPI OpenAPI schema.
+Interactive documentation:
+https://digital-banking-backend-gctw.onrender.com/docs
 
-Interactive documentation: `/docs`
+Live API:
+https://digital-banking-backend-gctw.onrender.com
+
+Health check:
+https://digital-banking-backend-gctw.onrender.com/health
 
 | Method | Endpoint | Summary | Tags |
 |---|---|---|---|
@@ -22,6 +27,7 @@ Interactive documentation: `/docs`
 | `DELETE` | `/users/{user_id}` | Delete User | Users |
 | `GET` | `/users/{user_id}` | Get User | Users |
 | `PATCH` | `/users/{user_id}` | Update User | Users |
+| `GET` | `/health` | Database connectivity health check | Health |
 
 ## Authentication
 

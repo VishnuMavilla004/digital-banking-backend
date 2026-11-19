@@ -1,195 +1,156 @@
 
 # Digital Banking Backend System
 
-A RESTful digital banking backend built with Python, FastAPI, PostgreSQL, and SQLAlchemy. The project demonstrates secure authentication, account management, financial transactions, transaction history, idempotency, database integrity, and automated testing.
+A RESTful banking backend built using Python, FastAPI, PostgreSQL, and SQLAlchemy. The application demonstrates secure authentication, account management, financial transactions, transaction integrity, idempotency, concurrency control, automated testing, and cloud deployment.
 
-## Project Overview
+## Live Application
 
-The Digital Banking Backend provides APIs for customers and administrators to manage banking operations.
+| Resource | URL |
+|---|---|
+| API Base URL | https://digital-banking-backend-gctw.onrender.com |
+| Swagger UI | https://digital-banking-backend-gctw.onrender.com/docs |
+| Health Check | https://digital-banking-backend-gctw.onrender.com/health |
 
-## Live Deployment
+The health endpoint verifies application and database connectivity.
 
-**Application:** Digital Banking Backend
-
-**Live API:** https://digital-banking-backend-gctw.onrender.com/
-
-**Swagger Documentation:** https://digital-banking-backend-gctw.onrender.com/docs
-
-**Health Check:** https://digital-banking-backend-gctw.onrender.com/health
-
-### Deployment Architecture
-- Application hosting: Render
-- Containerization: Docker
-- Database: Neon PostgreSQL
-- Backend framework: FastAPI
-- ORM: SQLAlchemy
-- Database migrations: Alembic
-- Application server: Uvicorn
-
-**Note:** This is an educational portfolio project. Banking transactions are simulated and do not involve real money.
-
-### Core Features
-
-- User registration and authentication
-- Password hashing
-- JWT-based authentication
-- Role-based access control (RBAC)
-- Customer account creation and management
-- Account ownership validation
-- Deposits and withdrawals
-- Inter-account transfers
-- Transaction history with pagination
-- Idempotency protection against duplicate financial operations
-- Database transactions and row-level locking
-- Centralized exception handling
-- Application logging
-- Database schema migrations
-- Automated API and security testing
-- Concurrency testing
+> The hosted service uses free-tier infrastructure. Initial requests after inactivity may take longer because the service can sleep.
 
 ## Technology Stack
 
-| Component | Technology |
+| Category | Technology |
 |---|---|
-| Language | Python |
+| Language | Python 3.11 |
 | Backend Framework | FastAPI |
 | Database | PostgreSQL |
 | ORM | SQLAlchemy |
 | Authentication | JWT |
-| Password Hashing | Argon2 via pwdlib |
-| Data Validation | Pydantic |
+| Password Hashing | Argon2 |
+| Validation | Pydantic |
 | Database Migrations | Alembic |
-| Testing | Pytest |
-| HTTP Testing | FastAPI TestClient / HTTPX |
+| Testing | Pytest, HTTPX |
 | Code Quality | Ruff |
-| API Documentation | OpenAPI / Swagger UI |
+| Containerization | Docker |
+| Local Orchestration | Docker Compose |
+| Application Hosting | Render |
+| Hosted Database | Neon PostgreSQL |
+| API Documentation | OpenAPI, Swagger UI |
+| CI | GitHub Actions |
+
+## Core Features
+
+### Authentication and Authorization
+- User registration and login
+- Argon2 password hashing
+- JWT access-token authentication
+- Role-based access control
+- Customer resource ownership validation
+- Protected administrative operations
+
+### Account Management
+- Customer account creation
+- Account retrieval and updates
+- Unique account number generation
+- Account ownership enforcement
+- Non-negative balance validation
+
+### Banking Transactions
+- Deposits
+- Withdrawals
+- Account-to-account transfers
+- Transaction history with pagination
+- Idempotency-key protection
+- Database transaction management
+- PostgreSQL row-level locking
+- Deterministic locking order during transfers
+
+### Reliability and Quality
+- Database-level integrity constraints
+- Centralized exception handling
+- Application logging
+- Separate application and test databases
+- Automated API and security tests
+- Concurrency tests
+- Alembic migration management
+- Docker-based deployment
+- GitHub Actions CI workflow
 
 ## Architecture
 
-The application follows a layered architecture:
+The application follows a layered backend architecture:
 
-- Routers handle HTTP requests and responses.
-- Services contain banking business logic.
+- Routers handle HTTP requests.
+- Schemas validate requests and serialize responses.
+- Services implement banking business logic.
 - Models define database entities.
-- Schemas validate incoming and outgoing data.
-- Dependencies provide database sessions and authentication.
+- Dependencies manage database sessions and authentication.
 - PostgreSQL stores application data.
+- Alembic manages database schema changes.
 
 See [Architecture Documentation](docs/ARCHITECTURE.md).
 
-## Main Banking Capabilities
+## Transaction Reliability
 
-### Authentication and Authorization
+Financial operations require special handling to protect account balances.
 
-- Register users.
-- Authenticate users using email and password.
-- Issue JWT access tokens.
-- Retrieve the authenticated user's profile.
-- Restrict administrative operations to administrators.
-- Enforce customer-level resource ownership.
+The transfer implementation uses:
 
-### Account Management
+1. Request validation.
+2. Idempotency-key verification.
+3. Database transaction management.
+4. Row-level locks on the relevant accounts.
+5. Consistent account-lock ordering.
+6. Balance validation.
+7. Debit and credit operations.
+8. Transaction record creation.
+9. Database commit.
 
-- Create customer accounts.
-- Retrieve accounts belonging to the authenticated customer.
-- Retrieve and update account information.
-- Generate unique account numbers.
-- Enforce non-negative account balances.
+These mechanisms help prevent duplicate processing and conflicting concurrent balance updates.
 
-### Financial Transactions
-
-- Deposit money into an account.
-- Withdraw money from an account.
-- Transfer money between accounts.
-- Retrieve account transaction history.
-- Prevent duplicate transaction processing using idempotency keys.
-
-**Note:** Deposits are simulated backend operations. This project does not connect to a real banking network or payment settlement system.
-
-## Reliability and Security
-
-The implementation includes:
-
-- Password hashing rather than plaintext password storage.
-- JWT signature and expiry validation.
-- Role-based authorization.
-- Account ownership checks.
-- SQLAlchemy transaction management.
-- PostgreSQL row-level locking for financial operations.
-- Deterministic locking order for transfers.
-- Idempotency key validation.
-- Database-level integrity constraints.
-- Centralized exception handling.
-- Logging without intentionally recording authentication credentials.
-- Separate application and test databases.
-
-This is an educational portfolio project, not a certified production banking platform.
+See [Architecture Documentation](docs/ARCHITECTURE.md).
 
 ## Project Structure
 
 ```text
-app/
-    main.py
-    database.py
-    dependencies.py
-    security.py
-    auth_dependencies.py
-    logging_config.py
-    exception_handlers.py
-
-    models/
-        user.py
-        account.py
-        transaction.py
-
-    schemas/
-        user.py
-        account.py
-        auth.py
-        transaction.py
-
-    routers/
-        users.py
-        auth.py
-        accounts.py
-
-    services/
-        banking.py
-
-tests/
-    conftest.py
-    test_app.py
-    test_users.py
-    test_auth.py
-    test_accounts.py
-    test_transactions.py
-    test_security.py
-    test_validation.py
-    test_admin.py
-    test_workflows.py
-    test_exception_handlers.py
-    test_concurrency.py
-    test_database_constraints.py
-    test_jwt_config.py
-
-migrations/
-docs/
-scripts/
+digital-banking-backend/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── app/
+│   ├── models/
+│   ├── routers/
+│   ├── schemas/
+│   ├── services/
+│   ├── main.py
+│   ├── database.py
+│   ├── dependencies.py
+│   ├── security.py
+│   ├── auth_dependencies.py
+│   ├── exception_handlers.py
+│   └── logging_config.py
+│
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── API_REFERENCE.md
+│   ├── DEPLOYMENT.md
+│   ├── INTERVIEW_GUIDE.md
+│   └── openapi.json
+│
+├── migrations/
+├── scripts/
+├── tests/
+│
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── alembic.ini
+├── Dockerfile
+├── docker-compose.yml
+├── pyproject.toml
+├── requirements.txt
+└── README.md
 ```
-## Common Response Codes
-
-| Code | Meaning |
-|---|---|
-| 200 | Request successful |
-| 201 | Resource created successfully |
-| 204 | Resource deleted successfully (no response body) |
-| 400 | Bad request |
-| 401 | Authentication required |
-| 403 | Permission denied |
-| 404 | Resource not found |
-| 409 | Conflict |
-| 422 | Validation error |
-| 500 | Internal server error |
 
 ## Local Setup
 
@@ -211,120 +172,140 @@ python -m venv .venv
 
 ### 3. Install dependencies
 
-```powershell
+```bash
 pip install -r requirements.txt
 ```
 
 ### 4. Configure environment variables
 
-Copy `.env.example` to `.env`.
+```powershell
+Copy-Item .env.example .env
+```
 
-Update the database credentials and JWT configuration locally.
-
-Never commit `.env` or expose its contents.
+Update the local PostgreSQL credentials and JWT configuration in `.env`.
 
 ### 5. Create PostgreSQL databases
 
-Create two separate databases:
+Create these two separate databases:
 
-- `digital_banking` — application database
-- `digital_banking_test` — automated test database
+- `digital_banking`
+- `digital_banking_test`
 
-The test database must never be replaced with the development database.
+Never use the application database as the automated test database.
 
 ### 6. Apply migrations
 
-```powershell
+```bash
 alembic upgrade head
 ```
 
 ### 7. Start the application
 
-```powershell
+```bash
 python -m uvicorn app.main:app --reload
 ```
 
 Application:
 
-```text
 http://127.0.0.1:8000
-```
 
-Swagger documentation:
+Swagger UI:
 
-```text
 http://127.0.0.1:8000/docs
+
+## Docker Setup
+
+Requirements: Docker Desktop and Docker Compose.
+
+Start the application:
+
+```bash
+docker compose up --build -d
 ```
 
-OpenAPI schema:
+Inspect containers:
 
-```text
-http://127.0.0.1:8000/openapi.json
+```bash
+docker compose ps
 ```
 
-## API Documentation
+Inspect API logs:
 
-The complete API reference is available in:
+```bash
+docker compose logs api
+```
 
-- [API Reference](docs/API_REFERENCE.md)
-- [OpenAPI Specification](docs/openapi.json)
-- Swagger UI at `/docs`
+Stop containers:
 
-## Running Tests
+```bash
+docker compose down
+```
 
-Run the complete test suite:
+The Docker Compose database uses a persistent named volume.
 
-```powershell
+## Testing
+
+Run the complete automated test suite:
+
+```bash
 pytest -v
 ```
 
 Run code-quality checks:
 
-```powershell
-ruff check app tests
-ruff format --check app tests
-python -m compileall app tests migrations
+```bash
+ruff check app tests scripts
+ruff format --check app tests scripts
 ```
 
-Check database migrations:
+Compile the application:
 
-```powershell
+```bash
+python -m compileall app tests migrations scripts
+```
+
+Verify database migrations:
+
+```bash
 alembic current
 alembic check
 ```
 
-The project has passed a 111-test checkpoint covering API behavior, authentication, authorization, banking workflows, database constraints, and concurrent operations.
+The project previously passed a 111-test checkpoint covering authentication, authorization, API workflows, database constraints, exception handling, and concurrent transactions. Run the current test suite for the latest result.
 
-Always run the latest test suite against the isolated test database before publishing changes.
+## Continuous Integration
 
-## Database Design
+GitHub Actions automatically runs:
 
-The system uses three principal entities:
+- Ruff lint checks
+- Formatting verification
+- Python compilation
+- Alembic migration checks
+- Automated tests
+- Docker image build
 
-- Users
-- Accounts
-- Transactions
+Workflow configuration:
 
-A user can own multiple accounts. Transactions reference source and destination accounts.
+`.github/workflows/ci.yml`
 
-See [Database ER Diagram](docs/ARCHITECTURE.md).
+## Documentation
 
-## Future Improvements
+- [System Architecture](docs/ARCHITECTURE.md)
+- [API Reference](docs/API_REFERENCE.md)
+- [Deployment Guide](docs/DEPLOYMENT.md)
+- [Interview Preparation Guide](docs/INTERVIEW_GUIDE.md)
+- [OpenAPI Specification](docs/openapi.json)
 
-Potential extensions include:
+## Important Project Scope
 
-- Refresh token rotation and revocation
-- Account statement exports
-- Transaction notifications
-- Rate limiting
-- Audit trails
-- Docker-based development
-- CI/CD with GitHub Actions
-- Deployment with managed PostgreSQL
-- Integration with a payment sandbox
+This is an educational backend engineering portfolio project.
+
+Deposits and withdrawals are simulated application operations. The system does not connect to a real banking network, payment gateway, or settlement infrastructure.
+
+It is not a certified production banking platform.
 
 ## Author
 
 Python Backend Development Portfolio Project
 
-**Focus:** Backend Engineering | REST APIs | Python | FastAPI | PostgreSQL | SQLAlchemy | Authentication | Automated Testing
+Focus: Backend Engineering | Python | FastAPI | PostgreSQL | SQLAlchemy | REST APIs | Authentication | Database Transactions | Automated Testing

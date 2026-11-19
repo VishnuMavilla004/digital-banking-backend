@@ -21,15 +21,12 @@ jobs:
     services:
       postgres:
         image: postgres:17
-
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: digital_banking_ci
-
         ports:
           - 5432:5432
-
         options: >-
           --health-cmd "pg_isready -U postgres -d digital_banking_ci"
           --health-interval 10s
@@ -47,15 +44,14 @@ jobs:
       JWT_SECRET_KEY: ci-only-secret-key-do-not-use-in-production-123456789
       JWT_ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: "30"
-
       PGPASSWORD: postgres
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
@@ -63,7 +59,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install -r requirements.txt
+          python -m pip install ruff pytest
 
       - name: Create isolated test database
         run: |
@@ -73,11 +70,11 @@ jobs:
 
       - name: Run Ruff lint
         run: |
-          ruff check app tests scripts
+          python -m ruff check app tests scripts
 
       - name: Verify formatting
         run: |
-          ruff format --check app tests scripts
+          python -m ruff format --check app tests scripts
 
       - name: Compile Python files
         run: |
